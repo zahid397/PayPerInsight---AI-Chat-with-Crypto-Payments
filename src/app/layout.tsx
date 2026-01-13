@@ -1,9 +1,13 @@
-import './globals.css';
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import './globals.css'; // 👈 Make sure this file exists in src/app/
 import { Providers } from './providers';
 
-export const metadata = {
+const inter = Inter({ subsets: ['latin'] });
+
+export const metadata: Metadata = {
   title: 'PayPerInsight AI',
-  description: 'AI Chat with Crypto Payments (Demo)',
+  description: 'AI Chat with Crypto Payments',
 };
 
 export default function RootLayout({
@@ -13,7 +17,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body>
+      <body className={inter.className}>
         <Providers>{children}</Providers>
       </body>
     </html>
