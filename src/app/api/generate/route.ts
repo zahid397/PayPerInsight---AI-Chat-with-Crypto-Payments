@@ -1,37 +1,17 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { generateAIResponse } from '@/lib/ai';
+import { NextResponse } from 'next/server';
 
-export async function POST(request: NextRequest) {
+export async function POST(req: Request) {
   try {
-    const { prompt, hasPaid } = await request.json();
+    const { prompt } = await req.json();
 
-    if (!prompt) {
-      return NextResponse.json(
-        { error: 'Prompt is required' },
-        { status: 400 }
-      );
-    }
+    // Hackathon Demo: Fake AI Response
+    // (Later you can add real Groq/OpenAI logic here)
+    const fakeResponse = `AI Analysis for: "${prompt}"\n\nBased on the current market data, the trend appears bullish. Security protocols are active. 🚀`;
 
-    // In production, verify payment with Circle API here
-    if (!hasPaid && process.env.NODE_ENV === 'production') {
-      // Verify payment status
-      // const paymentVerified = await verifyPayment(sessionId);
-      // if (!paymentVerified) {
-      //   return NextResponse.json(
-      //     { error: 'Payment required' },
-      //     { status: 402 }
-      //   );
-      // }
-    }
-
-    // Generate AI response
-    const response = await generateAIResponse(prompt);
-
-    return NextResponse.json({ response });
+    return NextResponse.json({ response: fakeResponse });
   } catch (error) {
-    console.error('API Error:', error);
     return NextResponse.json(
-      { error: 'Failed to generate response' },
+      { error: 'Failed to process request' },
       { status: 500 }
     );
   }
