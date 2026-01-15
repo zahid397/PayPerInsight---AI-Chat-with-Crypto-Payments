@@ -3,359 +3,245 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PayPerInsight | Agentic AI</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>ArcMind | Autonomous Agent</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bgDark: '#050511',
+                        primary: '#00f2ff', // Cyan
+                        secondary: '#bd00ff', // Purple
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --primary: #8b5cf6; /* Violet */
-            --secondary: #06b6d4; /* Cyan */
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --accent-gradient: linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%);
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            overflow: hidden;
-        }
-
-        /* Navbar */
-        .navbar {
-            width: 100%;
-            padding: 1.5rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(10px);
-            z-index: 10;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            background: var(--accent-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .status-badge {
-            background: rgba(6, 182, 212, 0.1);
-            color: var(--secondary);
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            border: 1px solid rgba(6, 182, 212, 0.2);
-        }
-
-        /* Main Chat Container */
-        .chat-container {
-            flex: 1;
-            width: 100%;
-            max-width: 800px;
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            overflow-y: auto;
-            scroll-behavior: smooth;
-        }
-
-        .welcome-screen {
-            text-align: center;
-            margin-top: 5vh;
-        }
-
-        .welcome-screen h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .welcome-screen p {
-            color: var(--text-muted);
-            font-size: 1.1rem;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        /* Messages */
-        .message {
-            display: flex;
-            gap: 1rem;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .message.user {
-            flex-direction: row-reverse;
-        }
-
-        .avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-        }
-
-        .bot-avatar { background: var(--card-bg); border: 1px solid rgba(255,255,255,0.1); color: var(--secondary); }
-        .user-avatar { background: var(--primary); color: white; }
-
-        .bubble {
-            max-width: 70%;
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
-            line-height: 1.6;
-            font-size: 1rem;
-        }
-
-        .message.bot .bubble {
-            background: var(--card-bg);
-            border: 1px solid rgba(255,255,255,0.05);
-            border-top-left-radius: 2px;
-        }
-
-        .message.user .bubble {
-            background: var(--accent-gradient);
+            background-color: #050511;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(189, 0, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(0, 242, 255, 0.08) 0%, transparent 50%);
             color: white;
-            border-top-right-radius: 2px;
         }
-
-        /* Paywall Card */
-        .paywall-card {
-            background: rgba(30, 41, 59, 0.7);
-            border: 1px solid var(--primary);
-            padding: 1.5rem;
-            border-radius: 12px;
-            margin-top: 10px;
-            backdrop-filter: blur(5px);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .blur-text {
-            filter: blur(5px);
-            user-select: none;
-            opacity: 0.6;
-        }
-
-        .unlock-overlay {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: rgba(15, 23, 42, 0.6);
-            z-index: 2;
-        }
-
-        .pay-btn {
-            background: var(--accent-gradient);
-            border: none;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 30px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .pay-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
-        }
-
-        /* Input Area */
-        .input-area {
-            width: 100%;
-            max-width: 800px;
-            padding: 1.5rem;
-            background: var(--bg-color);
-        }
-
-        .input-box-wrapper {
-            position: relative;
-            background: var(--card-bg);
-            border-radius: 15px;
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 5px;
-            transition: border-color 0.3s;
-        }
-
-        .input-box-wrapper:focus-within {
-            border-color: var(--primary);
-        }
-
-        input {
-            width: 100%;
-            background: transparent;
-            border: none;
-            padding: 15px;
-            color: white;
-            font-size: 1rem;
-            outline: none;
-        }
-
-        .send-btn {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: var(--card-bg);
-            color: var(--text-muted);
-            border: none;
-            padding: 10px;
-            cursor: pointer;
-            transition: color 0.3s;
-        }
-
-        input:not(:placeholder-shown) + .send-btn {
-            color: var(--primary);
-        }
-
-        /* Loading Animation */
-        .typing-indicator span {
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            background-color: var(--text-muted);
-            border-radius: 50%;
-            animation: typing 1s infinite;
-            margin: 0 2px;
-        }
-        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-
-        @keyframes typing {
-            0%, 100% { transform: translateY(0); opacity: 0.5; }
-            50% { transform: translateY(-5px); opacity: 1; }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Responsive */
-        @media (max-width: 600px) {
-            .navbar { padding: 1rem; }
-            .chat-container { padding: 1rem; }
-            .welcome-screen h1 { font-size: 1.8rem; }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #00f2ff; }
+        
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
     </style>
 </head>
-<body>
+<body class="h-screen flex flex-col overflow-hidden">
 
-    <nav class="navbar">
-        <div class="logo">
-            <i class="fa-solid fa-brain"></i> PayPerInsight
-        </div>
-        <div class="status-badge">
-            <i class="fa-solid fa-circle-nodes"></i> Arc Testnet
-        </div>
-    </nav>
-
-    <div class="chat-container" id="chatContainer">
-        
-        <div class="welcome-screen" id="welcomeScreen">
-            <h1>Unlock Valuable Insights</h1>
-            <p>Ask any complex market question. Get a preview instantly. Unlock the full strategic analysis with a micro-payment.</p>
+    <header class="fixed top-0 w-full p-4 px-6 flex justify-between items-center bg-[#050511]/90 backdrop-blur-md border-b border-white/5 z-50">
+        <div class="flex items-center gap-3">
+            <div class="bg-gradient-to-br from-cyan-500 to-blue-600 p-2 rounded-lg shadow-[0_0_15px_rgba(0,242,255,0.3)]">
+                <i class="fa-solid fa-brain text-white text-xl"></i>
+            </div>
+            <h1 class="text-xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent tracking-wide">
+                ArcMind
+            </h1>
         </div>
 
+        <div class="flex items-center gap-6">
+            <div class="hidden md:flex flex-col items-end">
+                <span class="text-[10px] text-slate-400 uppercase tracking-widest">Agent Treasury</span>
+                <div class="flex items-center gap-2 text-emerald-400 font-mono font-bold text-sm">
+                    <i class="fa-solid fa-wallet"></i> $45.20 USDC
+                </div>
+            </div>
+            <div class="px-3 py-1 rounded-full border border-cyan-500/20 bg-cyan-500/10 text-cyan-400 text-xs font-mono tracking-wider animate-pulse">
+                ARC TESTNET
+            </div>
         </div>
+    </header>
 
-    <div class="input-area">
-        <div class="input-box-wrapper">
-            <input type="text" id="userInput" placeholder="Ask about crypto trends, code reviews, or market strategy..." autocomplete="off">
-            <button class="send-btn" onclick="handleSend()">
-                <i class="fa-solid fa-paper-plane"></i>
-            </button>
+    <main id="chatContainer" class="flex-1 overflow-y-auto pt-24 pb-32 px-4 md:px-0 scroll-smooth">
+        <div class="max-w-3xl mx-auto space-y-6" id="messagesArea">
+            
+            <div class="text-center mt-20 opacity-60">
+                <h2 class="text-3xl font-bold text-slate-200">System Online</h2>
+                <p class="mt-2 text-slate-400 font-mono text-sm">Waiting for autonomous task input...</p>
+            </div>
+
         </div>
-        <p style="text-align: center; color: var(--text-muted); font-size: 0.75rem; margin-top: 10px;">
-            Powered by Groq AI • Payments via Circle USDC • Settled on Arc
-        </p>
+    </main>
+
+    <div class="fixed bottom-0 w-full p-4 bg-gradient-to-t from-[#050511] via-[#050511] to-transparent z-40">
+        <div class="max-w-3xl mx-auto relative group">
+            <div class="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-xl opacity-30 blur group-hover:opacity-80 transition duration-500"></div>
+            
+            <div class="relative flex items-center bg-[#0a0a16] rounded-xl border border-white/10 p-1.5">
+                <input 
+                    type="text" 
+                    id="userInput" 
+                    placeholder="Ask ArcMind to generate an image, check weather, or analyze prices..." 
+                    class="w-full bg-transparent text-white p-3 pl-4 outline-none placeholder:text-slate-600 font-light"
+                    autocomplete="off"
+                >
+                <button 
+                    onclick="handleSend()" 
+                    id="sendBtn"
+                    class="p-3 bg-cyan-600 hover:bg-cyan-500 rounded-lg text-white transition-all shadow-[0_0_15px_rgba(0,242,255,0.2)]"
+                >
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+            
+            <div class="text-center mt-3 text-[10px] text-slate-600 font-mono uppercase tracking-widest">
+                Powered by Groq • Gemini • Arc Network
+            </div>
+        </div>
     </div>
 
     <script>
+        const API_URL = "http://127.0.0.1:8000/api/agent/execute"; // Backend URL
         const chatContainer = document.getElementById('chatContainer');
-        const welcomeScreen = document.getElementById('welcomeScreen');
+        const messagesArea = document.getElementById('messagesArea');
         const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
 
         // Handle Enter Key
-        userInput.addEventListener('keypress', function (e) {
+        userInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') handleSend();
         });
 
         async function handleSend() {
-            const question = userInput.value.trim();
-            if (!question) return;
+            const text = userInput.value.trim();
+            if (!text) return;
 
-            // 1. Remove Welcome Screen & Clear Input
-            if(welcomeScreen) welcomeScreen.style.display = 'none';
+            // Clear Input & Remove Welcome Screen
             userInput.value = '';
+            if(document.querySelector('.text-center.mt-20')) {
+                document.querySelector('.text-center.mt-20').style.display = 'none';
+            }
 
-            // 2. Add User Message
-            addMessage('user', question);
+            // 1. Add User Message
+            addMessage('user', text);
 
-            // 3. Show Loading
+            // 2. Show Loading
             const loadingId = addLoading();
 
             try {
-                // -----------------------------------------
-                // CONNECT TO YOUR BACKEND HERE
-                // -----------------------------------------
-                const response = await fetch('http://127.0.0.1:8000/api/v1/ask', {
+                // 3. API Call to Backend
+                const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ question: question, model: "groq" })
+                    body: JSON.stringify({ task: text, model_preference: "groq" })
                 });
 
                 const data = await response.json();
                 
-                // Remove Loading
+                // 4. Remove Loading & Show Result
                 document.getElementById(loadingId).remove();
-
-                // 4. Show AI Preview + Paywall
-                addPaywallMessage(data);
+                addAgentMessage(data);
 
             } catch (error) {
                 document.getElementById(loadingId).remove();
-                addMessage('bot', "⚠️ Error connecting to the AI Brain. Is the backend running?");
+                addMessage('error', "⚠️ Connection Error: Is the Backend Running?");
                 console.error(error);
             }
         }
 
-        function addMessage(role, text) {
+        // --- Helper Functions ---
+
+        function scrollToBottom() {
+            chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
+        }
+
+        function addMessage(role, content) {
             const div = document.createElement('div');
-            div.className = `message ${role}`;
-            div.innerHTML = `
-                <div class="avatar ${role === 'user' ? 'user-avatar' : 'bot-avatar'}">
-                    <i class="fa-solid ${role === 'user' ? 'fa-user' : 'fa-robot'}"></i>
+            
+            if (role === 'user') {
+                div.className = "flex flex-row-reverse gap-4 animate-[fadeInUp_0.3s_ease-out]";
+                div.innerHTML = `
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-blue-600 flex items-center justify-center text-white shadow-lg shrink-0">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <div class="glass-panel p-4 px-6 rounded-2xl rounded-tr-none text-white max-w-[80%]">
+                        ${content}
+                    </div>
+                `;
+            } else if (role === 'error') {
+                div.innerHTML = `<div class="text-center text-red-500 font-mono text-sm my-4">${content}</div>`;
+            }
+
+            messagesArea.appendChild(div);
+            scrollToBottom();
+        }
+
+        function addAgentMessage(data) {
+            const div = document.createElement('div');
+            div.className = "flex gap-4 max-w-3xl animate-[fadeInUp_0.5s_ease-out]";
+            
+            // Reasoning Section (Hidden by default logic handled simpler here)
+            const reasoningHTML = data.reasoning ? `
+                <div class="bg-slate-900/40 border border-slate-700/50 rounded-lg mb-3 overflow-hidden">
+                    <div class="p-2 px-3 text-xs font-mono uppercase text-slate-400 flex items-center gap-2 bg-black/20">
+                        <i class="fa-solid fa-microchip text-cyan-400"></i> ArcMind Reasoning
+                    </div>
+                    <div class="p-3 text-sm text-slate-300 border-t border-slate-800">
+                        <p class="mb-1"><span class="text-cyan-500 font-bold">Thought:</span> ${data.reasoning}</p>
+                        <p><span class="text-purple-400 font-bold">Tool:</span> ${data.tool_used}</p>
+                    </div>
                 </div>
-                <div class="bubble">${text}</div>
+            ` : '';
+
+            // Payment Badge
+            const paymentHTML = data.transaction ? `
+                <div class="flex items-center gap-3 p-2.5 px-4 rounded-lg bg-emerald-950/30 border border-emerald-500/20 text-emerald-400 text-xs font-mono mb-3">
+                    <div class="p-1 bg-emerald-500/10 rounded-full"><i class="fa-solid fa-bolt"></i></div>
+                    <div class="flex-1">
+                        PAID <span class="font-bold text-white">${data.transaction.amount} ${data.transaction.currency}</span> ON ARC
+                    </div>
+                    <a href="${data.transaction.explorer_url}" target="_blank" class="hover:text-white hover:underline flex items-center gap-1">
+                        TX <i class="fa-solid fa-external-link-alt text-[10px]"></i>
+                    </a>
+                </div>
+            ` : '';
+
+            // Image
+            const imageHTML = data.image_url ? `
+                <div class="mt-4 rounded-xl overflow-hidden border border-white/10 relative group shadow-2xl">
+                    <img src="${data.image_url}" class="w-full object-cover" alt="Generated">
+                    <div class="absolute bottom-2 right-2 px-2 py-1 bg-black/60 text-[10px] rounded text-white backdrop-blur">
+                        AI GENERATED
+                    </div>
+                </div>
+            ` : '';
+
+            div.innerHTML = `
+                <div class="w-10 h-10 rounded-xl bg-slate-800 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shadow-[0_0_15px_rgba(0,242,255,0.15)] shrink-0">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <div class="flex-1">
+                    ${reasoningHTML}
+                    ${paymentHTML}
+                    <div class="glass-panel p-5 rounded-2xl rounded-tl-none text-slate-100 leading-relaxed shadow-lg">
+                        <div class="whitespace-pre-wrap">${data.content}</div>
+                        ${imageHTML}
+                    </div>
+                </div>
             `;
-            chatContainer.appendChild(div);
+
+            messagesArea.appendChild(div);
             scrollToBottom();
         }
 
@@ -363,68 +249,14 @@
             const id = 'loading-' + Date.now();
             const div = document.createElement('div');
             div.id = id;
-            div.className = 'message bot';
+            div.className = "flex gap-4 items-center animate-pulse text-cyan-400 ml-2 my-4";
             div.innerHTML = `
-                <div class="avatar bot-avatar"><i class="fa-solid fa-robot"></i></div>
-                <div class="bubble">
-                    <div class="typing-indicator"><span></span><span></span><span></span></div>
-                </div>
+                <i class="fa-solid fa-circle-notch fa-spin"></i>
+                <span class="font-mono text-sm tracking-widest">AGENT THINKING & PAYING...</span>
             `;
-            chatContainer.appendChild(div);
+            messagesArea.appendChild(div);
             scrollToBottom();
             return id;
-        }
-
-        function addPaywallMessage(data) {
-            const div = document.createElement('div');
-            div.className = 'message bot';
-            
-            // Generate HTML for the preview + paywall
-            div.innerHTML = `
-                <div class="avatar bot-avatar"><i class="fa-solid fa-robot"></i></div>
-                <div class="bubble" style="width: 100%;">
-                    <p style="font-weight: 600; color: var(--secondary); margin-bottom: 5px;">
-                        <i class="fa-solid fa-eye"></i> Free Preview
-                    </p>
-                    <p>${data.preview}</p>
-                    
-                    <div class="paywall-card" id="paywall-${Date.now()}">
-                        <div class="blur-text">
-                            ${data.full_answer_hidden || "This detailed analysis is hidden. Unlock to read the full strategy..."}
-                            <br><br>
-                            Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-                            Veritatis distinctio, optio natus voluptatem sit amet.
-                        </div>
-                        <div class="unlock-overlay">
-                            <button class="pay-btn" onclick="unlockContent(this)">
-                                <i class="fa-solid fa-lock-open"></i> Unlock for $${data.price_usdc} USDC
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            chatContainer.appendChild(div);
-            scrollToBottom();
-        }
-
-        function unlockContent(btn) {
-            // Simulate Payment Logic
-            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Processing...';
-            
-            setTimeout(() => {
-                const overlay = btn.parentElement;
-                const blurText = overlay.previousElementSibling;
-                
-                // Unlock Animation
-                overlay.style.display = 'none';
-                blurText.style.filter = 'none';
-                blurText.style.opacity = '1';
-                blurText.style.color = '#fff';
-            }, 2000);
-        }
-
-        function scrollToBottom() {
-            chatContainer.scrollTop = chatContainer.scrollHeight;
         }
     </script>
 </body>
