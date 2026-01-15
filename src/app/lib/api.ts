@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:8000/api/v1',
+  // .env.local থেকে URL নেবে, না পেলে ডিফল্ট
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/agent',
   headers: {
     'Content-Type': 'application/json',
   },
