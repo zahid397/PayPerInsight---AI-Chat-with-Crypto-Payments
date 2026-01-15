@@ -1,424 +1,335 @@
-/* Reset & Base */
+/* -------------------------------------------
+   1. VARIABLES & RESET (Dark Neon Theme)
+------------------------------------------- */
+:root {
+    --bg-dark: #050511;
+    --card-bg: rgba(20, 25, 40, 0.7);
+    --primary: #00f2ff; /* Cyan Neon */
+    --secondary: #bd00ff; /* Purple Neon */
+    --text-main: #e2e8f0;
+    --text-muted: #94a3b8;
+    --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+    --neon-shadow: 0 0 10px rgba(0, 242, 255, 0.4), 0 0 20px rgba(0, 242, 255, 0.2);
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'Inter', 'Courier New', monospace; /* Tech Font */
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.container {
-    width: 100%;
-    max-width: 600px;
-    background: white;
-    border-radius: 20px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-    overflow: hidden;
+    background-color: var(--bg-dark);
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(189, 0, 255, 0.1) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(0, 242, 255, 0.1) 0%, transparent 40%);
+    color: var(--text-main);
+    height: 100vh;
     display: flex;
     flex-direction: column;
-    height: 90vh;
+    overflow: hidden;
+    animation: bgPulse 10s infinite alternate;
 }
 
-/* Header */
-.header {
-    background: linear-gradient(90deg, #4f46e5, #7c3aed);
-    color: white;
-    padding: 20px;
-    text-align: center;
+/* -------------------------------------------
+   2. KEYFRAME ANIMATIONS (The Cool Stuff)
+------------------------------------------- */
+
+/* ব্যাকগ্রাউন্ড পালস এনিমেশন */
+@keyframes bgPulse {
+    0% { background-size: 100% 100%; }
+    100% { background-size: 120% 120%; }
+}
+
+/* মেসেজ আসার এনিমেশন (নিচ থেকে উপরে) */
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* টাইপিং ইন্ডিকেটর বাউন্স */
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); opacity: 0.5; }
+    50% { transform: translateY(-6px); opacity: 1; box-shadow: 0 0 8px var(--primary); }
+}
+
+/* বাটনের গ্লো এফেক্ট */
+@keyframes neonPulse {
+    0% { box-shadow: 0 0 5px var(--primary); }
+    50% { box-shadow: 0 0 20px var(--primary), 0 0 10px var(--secondary); }
+    100% { box-shadow: 0 0 5px var(--primary); }
+}
+
+/* -------------------------------------------
+   3. LAYOUT COMPONENTS
+------------------------------------------- */
+
+/* Navbar (Glass Header) */
+.navbar {
+    width: 100%;
+    padding: 1.2rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(5, 5, 17, 0.8);
+    backdrop-filter: blur(15px);
+    border-bottom: var(--glass-border);
+    z-index: 100;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
 }
 
 .logo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
-    margin-bottom: 10px;
-}
-
-.logo-icon {
-    font-size: 2.5rem;
-}
-
-.logo h1 {
-    font-size: 2rem;
+    font-size: 1.4rem;
     font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    background: linear-gradient(90deg, var(--primary), #fff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 10px rgba(0, 242, 255, 0.3);
 }
 
-.tagline {
-    font-size: 0.9rem;
-    opacity: 0.9;
-    letter-spacing: 0.5px;
+.status-badge {
+    background: rgba(0, 242, 255, 0.1);
+    color: var(--primary);
+    padding: 6px 16px;
+    border-radius: 4px; /* Techy sharp corners */
+    font-size: 0.8rem;
+    border: 1px solid rgba(0, 242, 255, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-/* Chat Container */
+/* Chat Area */
 .chat-container {
     flex: 1;
-    padding: 20px;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
     overflow-y: auto;
-    background: #f8fafc;
+    scroll-behavior: smooth;
 }
 
+/* Custom Scrollbar (Hacker Style) */
+.chat-container::-webkit-scrollbar {
+    width: 6px;
+}
+.chat-container::-webkit-scrollbar-track {
+    background: #0f172a;
+}
+.chat-container::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 3px;
+    box-shadow: 0 0 10px var(--primary);
+}
+
+/* Messages */
 .message {
-    margin-bottom: 20px;
-    animation: fadeIn 0.3s ease;
+    display: flex;
+    gap: 1rem;
+    animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Elastic effect */
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+.message.user {
+    flex-direction: row-reverse;
 }
 
-.message-header {
+.avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 8px; /* Square with slight round */
     display: flex;
     align-items: center;
-    margin-bottom: 8px;
-    font-size: 0.85rem;
+    justify-content: center;
+    font-size: 1.2rem;
+    position: relative;
 }
 
-.sender {
-    font-weight: 600;
-    color: #4f46e5;
+.bot-avatar {
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
 }
 
-.message-content {
-    background: white;
-    padding: 15px;
-    border-radius: 15px;
-    border: 2px solid #e2e8f0;
-    line-height: 1.5;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+.user-avatar {
+    background: linear-gradient(135deg, var(--secondary), #8b5cf6);
+    color: white;
+    box-shadow: 0 0 15px rgba(189, 0, 255, 0.3);
 }
 
-.agent .message-content {
-    border-left: 4px solid #4f46e5;
-}
-
-.demo-note {
-    margin-top: 10px;
-    padding: 8px 12px;
-    background: #e0f2fe;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    color: #0369a1;
-    border: 1px solid #bae6fd;
-}
-
-/* Input Area */
-.input-area {
-    padding: 20px;
-    border-top: 1px solid #e2e8f0;
-    background: white;
-}
-
-.input-wrapper {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 10px;
-}
-
-#questionInput {
-    flex: 1;
-    padding: 15px 20px;
-    border: 2px solid #e2e8f0;
+/* Bubbles */
+.bubble {
+    max-width: 75%;
+    padding: 1.2rem 1.5rem;
     border-radius: 12px;
+    line-height: 1.6;
+    font-size: 1rem;
+    position: relative;
+    backdrop-filter: blur(5px);
+}
+
+.message.bot .bubble {
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(0, 242, 255, 0.2);
+    border-left: 3px solid var(--primary); /* Tech Accent */
+    color: #e2e8f0;
+}
+
+.message.user .bubble {
+    background: rgba(139, 92, 246, 0.2);
+    border: 1px solid rgba(139, 92, 246, 0.4);
+    border-right: 3px solid var(--secondary);
+    color: #fff;
+    text-align: right;
+}
+
+/* -------------------------------------------
+   4. PAYWALL & TECH CARD
+------------------------------------------- */
+.paywall-card {
+    margin-top: 15px;
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid var(--secondary);
+    padding: 20px;
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Scanline Effect Overlay */
+.paywall-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: repeating-linear-gradient(
+        transparent 0px,
+        transparent 2px,
+        rgba(0, 242, 255, 0.05) 3px
+    );
+    pointer-events: none;
+}
+
+.blur-text {
+    filter: blur(8px);
+    opacity: 0.5;
+    user-select: none;
+    transition: all 0.8s ease;
+}
+
+.unlock-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(5, 5, 17, 0.6);
+    backdrop-filter: blur(2px);
+    z-index: 2;
+}
+
+/* Glowing Button */
+.pay-btn {
+    background: transparent;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    padding: 12px 30px;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 700;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: 0.3s;
+    box-shadow: 0 0 10px rgba(0, 242, 255, 0.1);
+}
+
+.pay-btn:hover {
+    background: var(--primary);
+    color: #000;
+    box-shadow: 0 0 25px var(--primary);
+}
+
+/* -------------------------------------------
+   5. INPUT AREA (HUD Style)
+------------------------------------------- */
+.input-area {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: transparent;
+}
+
+.input-box-wrapper {
+    position: relative;
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 5px;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+}
+
+.input-box-wrapper:focus-within {
+    border-color: var(--primary);
+    box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+}
+
+input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 15px;
+    color: white;
     font-size: 1rem;
     outline: none;
-    transition: all 0.3s;
 }
 
-#questionInput:focus {
-    border-color: #4f46e5;
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-}
-
-.input-hint {
-    text-align: center;
-    font-size: 0.85rem;
-    color: #64748b;
-    font-style: italic;
-}
-
-/* Buttons */
-.btn-primary {
-    background: linear-gradient(90deg, #4f46e5, #7c3aed);
-    color: white;
+.send-btn {
+    background: var(--primary);
+    color: #000;
     border: none;
-    padding: 15px 25px;
-    border-radius: 12px;
-    font-size: 1rem;
-    font-weight: 600;
+    width: 45px;
+    height: 45px;
+    border-radius: 6px;
+    margin-right: 5px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.3s;
-}
-
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(79, 70, 229, 0.3);
-}
-
-.btn-primary:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none;
-}
-
-/* Payment Section */
-.payment-section {
-    padding: 20px;
-    background: #f8fafc;
-    border-top: 1px solid #e2e8f0;
-}
-
-.payment-card {
-    background: white;
-    border-radius: 15px;
-    padding: 25px;
-    border: 2px solid #e2e8f0;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-}
-
-.payment-header {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 20px;
-    color: #4f46e5;
-}
-
-.payment-header i {
-    font-size: 1.5rem;
-}
-
-.payment-preview {
-    background: #f1f5f9;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    font-style: italic;
-    border-left: 4px solid #94a3b8;
-}
-
-.payment-details {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    padding-bottom: 20px;
-    border-bottom: 1px dashed #cbd5e1;
-}
-
-.price-display {
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-}
-
-.price-label {
-    color: #64748b;
-    font-size: 0.9rem;
-}
-
-.price {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #059669;
-    background: #d1fae5;
-    padding: 5px 15px;
-    border-radius: 8px;
-}
-
-.arc-badge {
-    background: #e0e7ff;
-    color: #3730a3;
-    padding: 8px 15px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.btn-pay {
-    width: 100%;
-    background: linear-gradient(90deg, #059669, #10b981);
-    color: white;
-    border: none;
-    padding: 18px;
-    border-radius: 12px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    cursor: pointer;
+    transition: 0.3s;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    transition: all 0.3s;
+    font-size: 1.2rem;
 }
 
-.btn-pay:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 20px rgba(5, 150, 105, 0.3);
+.send-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px var(--primary);
 }
 
-.payment-status {
-    margin-top: 15px;
-    padding: 12px;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    text-align: center;
-    display: none;
+/* Typing Animation Dots */
+.typing-indicator span {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background-color: var(--primary);
+    border-radius: 50%;
+    animation: bounce 1s infinite;
+    margin: 0 3px;
 }
-
-.status-loading {
-    background: #fef3c7;
-    color: #92400e;
-    border: 1px solid #fde68a;
-}
-
-.status-success {
-    background: #d1fae5;
-    color: #065f46;
-    border: 1px solid #a7f3d0;
-}
-
-.status-error {
-    background: #fee2e2;
-    color: #991b1b;
-    border: 1px solid #fecaca;
-}
-
-/* Result Section */
-.result-section {
-    padding: 20px;
-    background: #f8fafc;
-    border-top: 1px solid #e2e8f0;
-}
-
-.result-card {
-    background: white;
-    border-radius: 15px;
-    padding: 25px;
-    border: 2px solid #a7f3d0;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-}
-
-.result-header {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 20px;
-    color: #059669;
-}
-
-.result-content {
-    background: #f1f5f9;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    line-height: 1.6;
-    white-space: pre-wrap;
-}
-
-.result-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.usdc-badge {
-    background: #d1fae5;
-    color: #065f46;
-    padding: 8px 15px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.btn-secondary {
-    background: #e2e8f0;
-    color: #475569;
-    border: none;
-    padding: 12px 25px;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.3s;
-}
-
-.btn-secondary:hover {
-    background: #cbd5e1;
-}
-
-/* Footer */
-.footer {
-    padding: 20px;
-    border-top: 1px solid #e2e8f0;
-    background: white;
-}
-
-.tech-stack {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 15px;
-    margin-bottom: 10px;
-}
-
-.tech-item {
-    background: #f1f5f9;
-    padding: 8px 15px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    color: #475569;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.hackathon-info {
-    text-align: center;
-    font-size: 0.8rem;
-    color: #64748b;
-    font-style: italic;
-}
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
 
 /* Responsive */
-@media (max-width: 640px) {
-    .container {
-        height: 95vh;
-        border-radius: 10px;
-    }
-    
-    .logo h1 {
-        font-size: 1.5rem;
-    }
-    
-    .payment-details {
-        flex-direction: column;
-        gap: 15px;
-        align-items: flex-start;
-    }
-    
-    .result-footer {
-        flex-direction: column;
-        gap: 15px;
-        align-items: flex-start;
-    }
+@media (max-width: 768px) {
+    .bubble { max-width: 90%; }
+    .paywall-card { padding: 15px; }
 }
