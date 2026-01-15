@@ -1,259 +1,186 @@
-// Configuration
-const API_BASE_URL = 'http://localhost:8000';
-let currentSessionId = null;
+// ---------------------------------------------------------
+// CONFIGURATION
+// ---------------------------------------------------------
+const API_URL = "http://127.0.0.1:8000/api/v1/ask"; // FastAPI Backend URL
 
 // DOM Elements
-const questionInput = document.getElementById('questionInput');
-const askButton = document.getElementById('askButton');
 const chatContainer = document.getElementById('chatContainer');
-const paymentSection = document.getElementById('paymentSection');
-const paymentPreview = document.getElementById('paymentPreview');
-const priceDisplay = document.getElementById('priceDisplay');
-const payButton = document.getElementById('payButton');
-const paymentStatus = document.getElementById('paymentStatus');
-const resultSection = document.getElementById('resultSection');
-const resultContent = document.getElementById('resultContent');
-const newQuestionButton = document.getElementById('newQuestionButton');
+const userInput = document.getElementById('userInput');
+const welcomeScreen = document.getElementById('welcomeScreen');
 
-// Utility Functions
-function showLoading(element, message = 'Loading...') {
-    element.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${message}`;
-    element.style.display = 'block';
-}
+// ---------------------------------------------------------
+// EVENT LISTENERS
+// ---------------------------------------------------------
 
-function showSuccess(element, message) {
-    element.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
-    element.className = 'payment-status status-success';
-    element.style.display = 'block';
-}
+// Handle Enter Key
+userInput.addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') handleSend();
+});
 
-function showError(element, message) {
-    element.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
-    element.className = 'payment-status status-error';
-    element.style.display = 'block';
-}
-
-function addMessageToChat(sender, content, isAgent = true) {
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `message ${isAgent ? 'agent' : 'user'}`;
-    
-    const timestamp = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-    
-    messageDiv.innerHTML = `
-        <div class="message-header">
-            <span class="sender">${sender}</span>
-            <span class="timestamp">${timestamp}</span>
-        </div>
-        <div class="message-content">${content}</div>
-    `;
-    
-    chatContainer.appendChild(messageDiv);
+// Auto-scroll to bottom
+function scrollToBottom() {
     chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
-// API Functions
-async function sendQuestion(question) {
-    try {
-        askButton.disabled = true;
-        askButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Thinking...';
-        
-        const response = await fetch(`${API_BASE_URL}/chat`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ question })
-        });
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        return data;
-        
-    } catch (error) {
-        console.error('Error sending question:', error);
-        showError(paymentStatus, 'Failed to process question. Please try again.');
-        return null;
-    } finally {
-        askButton.disabled = false;
-        askButton.innerHTML = '<i class="fas fa-paper-plane"></i> Ask';
-    }
-}
+// ---------------------------------------------------------
+// CORE FUNCTIONS
+// ---------------------------------------------------------
 
-async function processPayment(sessionId) {
+async function handleSend() {
+    const question = userInput.value.trim();
+    if (!question) return;
+
+    // 1. UI Updates (Hide Welcome, Clear Input)
+    if (welcomeScreen) welcomeScreen.style.display = 'none';
+    userInput.value = '';
+
+    // 2. Show User Message
+    addMessage('user', question);
+
+    // 3. Show Loading Indicator
+    const loadingId = addLoading();
+
     try {
-        showLoading(paymentStatus, 'Processing USDC payment on Arc testnet...');
-        payButton.disabled = true;
-        
-        const response = await fetch(`${API_BASE_URL}/pay`, {
+        // 4. Call FastAPI Backend
+        const response = await fetch(API_URL, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
-                session_id: sessionId,
-                payment_token: 'mock_payment_token_0x123abc' 
+                question: question, 
+                model: "groq" // or 'deepseek', 'gemini'
             })
         });
-        
+
         if (!response.ok) {
-            if (response.status === 402) {
-                throw new Error('Payment verification failed');
-            }
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error("Backend connection failed");
         }
-        
+
         const data = await response.json();
-        return data;
-        
+
+        // 5. Remove Loading & Show Paywall Card
+        document.getElementById(loadingId).remove();
+        addPaywallMessage(data);
+
     } catch (error) {
-        console.error('Payment error:', error);
-        showError(paymentStatus, error.message || 'Payment failed. Please try again.');
-        return null;
-    } finally {
-        payButton.disabled = false;
+        document.getElementById(loadingId).remove();
+        addMessage('bot', `<span style="color: #ff4d4d;">⚠️ Error: Is the backend running? (${error.message})</span>`);
+        console.error(error);
     }
 }
 
-async function getResult(sessionId) {
-    try {
-        const response = await fetch(`${API_BASE_URL}/result?session_id=${sessionId}`);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        return data;
-        
-    } catch (error) {
-        console.error('Error getting result:', error);
-        return null;
-    }
-}
+// ---------------------------------------------------------
+// UI RENDERING FUNCTIONS
+// ---------------------------------------------------------
 
-// Event Handlers
-async function handleAsk() {
-    const question = questionInput.value.trim();
+function addMessage(role, text) {
+    const div = document.createElement('div');
+    div.className = `message ${role}`;
     
-    if (!question) {
-        alert('Please enter a question');
-        return;
-    }
-    
-    // Add user message to chat
-    addMessageToChat('👤 You', question, false);
-    
-    // Clear input
-    questionInput.value = '';
-    
-    // Show loading in chat
-    const loadingDiv = document.createElement('div');
-    loadingDiv.className = 'message agent';
-    loadingDiv.innerHTML = `
-        <div class="message-header">
-            <span class="sender">🤖 PayPerInsight Agent</span>
+    // Icons based on role
+    const icon = role === 'user' ? 'fa-user' : 'fa-robot';
+    const avatarClass = role === 'user' ? 'user-avatar' : 'bot-avatar';
+
+    div.innerHTML = `
+        <div class="avatar ${avatarClass}">
+            <i class="fa-solid ${icon}"></i>
         </div>
-        <div class="message-content">
-            <i class="fas fa-spinner fa-spin"></i> Analyzing your question and calculating insight value...
+        <div class="bubble">${text}</div>
+    `;
+    
+    chatContainer.appendChild(div);
+    scrollToBottom();
+}
+
+function addLoading() {
+    const id = 'loading-' + Date.now();
+    const div = document.createElement('div');
+    div.id = id;
+    div.className = 'message bot';
+    div.innerHTML = `
+        <div class="avatar bot-avatar"><i class="fa-solid fa-robot"></i></div>
+        <div class="bubble">
+            <div class="typing-indicator"><span></span><span></span><span></span></div>
         </div>
     `;
-    chatContainer.appendChild(loadingDiv);
-    
-    // Send question to API
-    const result = await sendQuestion(question);
-    
-    // Remove loading message
-    chatContainer.removeChild(loadingDiv);
-    
-    if (result) {
-        // Add preview to chat
-        addMessageToChat('🤖 PayPerInsight Agent', 
-            `🔒 **Preview:** ${result.preview}\n\n💵 **Price:** ${result.price_usdc} USDC\n\n*Pay to unlock full insight*`);
-        
-        // Store session ID
-        currentSessionId = result.session_id;
-        
-        // Show payment section
-        paymentPreview.textContent = result.preview;
-        priceDisplay.textContent = `${result.price_usdc} USDC`;
-        paymentSection.style.display = 'block';
-        resultSection.style.display = 'none';
-        
-        // Scroll to payment section
-        paymentSection.scrollIntoView({ behavior: 'smooth' });
-    }
+    chatContainer.appendChild(div);
+    scrollToBottom();
+    return id;
 }
 
-async function handlePayment() {
-    if (!currentSessionId) return;
+function addPaywallMessage(data) {
+    const div = document.createElement('div');
+    div.className = 'message bot';
     
-    showLoading(paymentStatus, 'Initiating USDC payment...');
-    
-    // Simulate payment processing
-    const paymentResult = await processPayment(currentSessionId);
-    
-    if (paymentResult && paymentResult.success) {
-        showSuccess(paymentStatus, paymentResult.message);
-        
-        // Wait a moment, then show result
-        setTimeout(async () => {
-            const result = await getResult(currentSessionId);
+    // Dynamic ID for unlocking later
+    const cardId = `paywall-${Date.now()}`;
+
+    // HTML Structure matching the Cyberpunk CSS
+    div.innerHTML = `
+        <div class="avatar bot-avatar"><i class="fa-solid fa-brain"></i></div>
+        <div class="bubble" style="width: 100%; max-width: 85%;">
             
-            if (result && result.paid) {
-                // Show result section
-                resultContent.textContent = result.full_answer;
-                paymentSection.style.display = 'none';
-                resultSection.style.display = 'block';
+            <div style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 10px;">
+                <strong style="color: var(--primary); font-size: 0.9rem; text-transform: uppercase;">
+                    <i class="fa-solid fa-eye"></i> Analysis Preview
+                </strong>
+                <p style="margin-top: 5px; color: #e2e8f0;">${data.preview}</p>
+            </div>
+
+            <div class="paywall-card" id="${cardId}">
                 
-                // Add final message to chat
-                addMessageToChat('🤖 PayPerInsight Agent', 
-                    `✅ **Full Insight Unlocked!**\n\n${result.full_answer}\n\n💰 **Payment:** ${result.price_usdc} USDC settled on Arc`);
-                
-                // Scroll to result
-                resultSection.scrollIntoView({ behavior: 'smooth' });
-            }
-        }, 1000);
-    }
+                <div class="blur-text" style="filter: blur(8px); opacity: 0.6; user-select: none;">
+                    ${data.full_answer_hidden || "Detailed strategic analysis hidden. Unlock to view full market insights..."}
+                    <br><br>
+                    <span style="opacity: 0.5;">(Premium Data) Lorem ipsum dolor sit amet, consectetur adipiscing elit...</span>
+                </div>
+
+                <div class="unlock-overlay">
+                    <button class="pay-btn" onclick="unlockContent(this, '${cardId}')">
+                        <i class="fa-solid fa-lock"></i> Unlock • $${data.price_usdc} USDC
+                    </button>
+                </div>
+
+            </div>
+
+            <div style="margin-top: 10px; font-size: 0.75rem; color: var(--text-muted); text-align: right;">
+                Powered by ${data.model_used.toUpperCase()} • Arc Network
+            </div>
+        </div>
+    `;
+
+    chatContainer.appendChild(div);
+    scrollToBottom();
 }
 
-function handleNewQuestion() {
-    // Reset UI
-    currentSessionId = null;
-    paymentSection.style.display = 'none';
-    resultSection.style.display = 'none';
-    paymentStatus.style.display = 'none';
-    questionInput.value = '';
-    questionInput.focus();
-    
-    // Scroll to input
-    questionInput.scrollIntoView({ behavior: 'smooth' });
+// ---------------------------------------------------------
+// PAYMENT SIMULATION LOGIC
+// ---------------------------------------------------------
+
+function unlockContent(btn, cardId) {
+    // 1. Visual Feedback (Processing)
+    btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Verifying on Arc...';
+    btn.style.borderColor = '#06b6d4';
+    btn.style.color = '#06b6d4';
+
+    // 2. Simulate Delay (Hackathon Demo Mode)
+    setTimeout(() => {
+        const card = document.getElementById(cardId);
+        const overlay = btn.parentElement;
+        const blurText = card.querySelector('.blur-text');
+
+        // 3. Unlock Animation
+        overlay.style.opacity = '0';
+        setTimeout(() => overlay.remove(), 500); // Remove button layer
+
+        // 4. Reveal Text
+        blurText.style.filter = 'none';
+        blurText.style.opacity = '1';
+        blurText.style.color = '#fff';
+        blurText.style.textShadow = '0 0 10px rgba(255,255,255,0.1)';
+        
+        // 5. Show Success Badge
+        card.style.border = '1px solid #00ff88'; // Green border
+        card.style.boxShadow = '0 0 15px rgba(0, 255, 136, 0.2)';
+        
+    }, 2000); // 2 seconds delay
 }
-
-// Event Listeners
-askButton.addEventListener('click', handleAsk);
-questionInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        handleAsk();
-    }
-});
-payButton.addEventListener('click', handlePayment);
-newQuestionButton.addEventListener('click', handleNewQuestion);
-
-// Initialize
-document.addEventListener('DOMContentLoaded', () => {
-    questionInput.focus();
-    
-    // Demo: Add some example questions
-    const examples = [
-        "What are the top 3 investment trends for 2024?",
-        "How can I optimize my e-commerce conversion rate?",
-        "What's the future of decentralized AI?",
-        "How to build a sustainable startup in climate tech?"
-    ];
-    
-    // Show examples in console for judges
-    console.log('PayPerInsight Demo Ready! Try these questions:', examples);
-});
