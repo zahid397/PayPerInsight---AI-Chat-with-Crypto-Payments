@@ -1,9 +1,8 @@
 fastapi
 uvicorn
-python-dotenv
-requests
-groq
 pydantic
-aiohttp
-python-multipart
-cors
+python-dotenv
+groq
+requests
+google-generativeai
+openai
