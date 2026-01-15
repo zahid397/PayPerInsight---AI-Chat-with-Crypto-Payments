@@ -1,79 +1,122 @@
-# 💡 PayPerInsight
 
-**ChatGPT-style AI agent with USDC micropayments • One insight, one payment**
+# 🧠 ArcMind: Autonomous Agentic Commerce
 
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.104.1-009688?logo=fastapi)](https://fastapi.tiangolo.com/)
-[![Arc Network](https://img.shields.io/badge/Arc%20Network-Testnet-4F46E5)](https://arc.network)
-[![USDC](https://img.shields.io/badge/USDC-Micropayments-26A17B)](https://www.circle.com/en/usdc)
+![ArcMind Banner](https://via.placeholder.com/1200x400/050511/00f2ff?text=ArcMind+Autonomous+Agent)
 
-## 🎯 What is PayPerInsight?
+> **"One Task. One Payment. Infinite Possibilities."**
 
-PayPerInsight is a **single-turn AI agent** that provides valuable insights for micropayments in USDC. Unlike subscription models, you pay only for the insights you need, when you need them.
+[![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.109-009688)](https://fastapi.tiangolo.com/)
+[![Groq](https://img.shields.io/badge/AI-Groq-orange)](https://groq.com/)
+[![Circle](https://img.shields.io/badge/Payments-USDC-blue)](https://www.circle.com/)
+[![Arc](https://img.shields.io/badge/Network-Arc_Testnet-bd00ff)](https://arc.circle.com/)
 
-### 🤔 Why Pay-Per-Insight Matters
+## 🚀 Overview
 
-Traditional AI services use subscription models where you pay monthly regardless of usage. PayPerInsight introduces **agentic commerce**:
-- **No subscriptions** – Pay only for valuable insights
-- **Micro-value** – Small payments (10¢ - $1) for targeted knowledge
-- **Instant settlement** – Payments settle on Arc testnet in seconds
-- **Quality guarantee** – Pricing based on insight complexity and value
+**ArcMind** is an autonomous AI agent built for the **Agentic Commerce on Arc** hackathon. Unlike traditional chatbots, ArcMind doesn't just talk—it **acts** and **pays**.
 
-## 🏗️ Architecture Overview
+It autonomously analyzes user requests, calculates the necessary budget, and executes micropayments using **USDC on the Arc Network** to fetch premium data (Weather, Stocks) or generate high-fidelity content (Images).
 
-### Backend (FastAPI)
-- **Agent Engine**: Analyzes queries, generates previews, calculates prices
-- **Payment Gateway**: Handles USDC payments via Circle Gateway
-- **Settlement Verifier**: Confirms payments on Arc testnet
-- **Session Manager**: Tracks user sessions and payment status
+### 🌟 Key Features
+* **🤖 Hybrid AI Brain:** Powered by **Groq (Mixtral)** for lightning-fast reasoning and **Google Gemini** as a robust fallback.
+* **💸 Autonomous Payments:** The agent autonomously executes **USDC micropayments** via Circle Gateway on the Arc Testnet.
+* **🧠 Transparent Reasoning:** Visualizes the agent's internal thought process ("Reasoning") and tool selection logic.
+* **🎨 Cyberpunk UI:** A modern, glassmorphism-inspired interface built with **Tailwind CSS** and **Framer Motion**.
+* **⚡ Real-time Settlement:** Payments are verified instantly with transaction hash links to the Arc Explorer.
 
-### Frontend (Vanilla JS)
-- **Clean Chat Interface**: ChatGPT-style conversation UI
-- **Payment Flow**: Preview → Price → Pay → Unlock
-- **Real-time Updates**: Status messages and result display
+---
 
-## 🔄 How It Works
+## 🏗️ Architecture
 
-### 1. **Ask a Question**
-User submits any question to the AI agent.
+The system consists of a high-performance **FastAPI Backend** and a reactive **Next.js Frontend**.
 
-### 2. **Receive Preview & Price**
-Agent analyzes the question, generates a **teaser preview**, and calculates a **USDC price** based on:
-- Question complexity
-- Insight depth required
-- Processing resources needed
+```mermaid
+graph LR
+    A[User Request] --> B(Next.js Frontend)
+    B --> C{FastAPI Backend}
+    C -->|1. Reasoning| D[Groq / Gemini AI]
+    C -->|2. Cost Calc| E[Logic Engine]
+    C -->|3. Payment| F[Circle / Arc Network]
+    F -->|Tx Hash| C
+    D -->|Content| C
+    C -->|Response| B
+    B --> G[UI Display]
 
-### 3. **Pay with USDC**
-User pays the calculated amount in USDC. Payment settles on **Arc testnet** via Circle Gateway.
-
-### 4. **Unlock Full Insight**
-Once payment is verified, the **full, valuable answer** is unlocked and displayed.
-
-## 🛠️ Tech Stack
-
-### Backend
-- **FastAPI** – Modern Python web framework with auto-generated docs
-- **Groq API** – High-speed LLM inference (Llama 3 70B)
-- **Arc RPC** – Settlement verification on testnet
-- **Circle Gateway** – USDC payment processing (mock for demo)
-- **In-memory Storage** – Session management
-
-### Frontend
-- **HTML5/CSS3** – Clean, responsive interface
-- **Vanilla JavaScript** – No frameworks, minimal dependencies
-- **Font Awesome** – Icon system
-
-## 🚀 Quick Start
-
-### Prerequisites
-- Python 3.9+
-- Groq API key (free at [groq.com](https://groq.com))
-- Node.js (for serving frontend)
-
-### Backend Setup
-```bash
-cd backend
-cp .env.example .env
-# Edit .env with your Groq API key
-
+🛠️ Tech Stack
+Frontend
+ * Framework: Next.js 14 (App Router)
+ * Styling: Tailwind CSS, Framer Motion
+ * Icons: Lucide React
+ * State: React Hooks
+Backend
+ * API: FastAPI (Python)
+ * AI Models: Groq (Mixtral-8x7b), Google Gemini Pro
+ * Validation: Pydantic
+ * Server: Uvicorn
+⚡ Installation & Setup
+Follow these steps to run ArcMind locally.
+1. Backend Setup
+Navigate to the backend folder and install dependencies:
+cd arcmind-backend
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
-python -m app.main
+
+Create a .env file in arcmind-backend/:
+GROQ_API_KEY=gsk_your_groq_key
+GEMINI_API_KEY=your_gemini_key
+CIRCLE_API_KEY=your_circle_key
+PROJECT_NAME="ArcMind Agent"
+
+Run the server:
+uvicorn app.main:app --reload
+
+Backend runs on: http://localhost:8000
+2. Frontend Setup
+Navigate to the frontend folder:
+cd arcmind-frontend
+npm install
+
+Create a .env.local file in arcmind-frontend/:
+NEXT_PUBLIC_API_URL=http://localhost:8000/api/agent/execute
+
+Run the frontend:
+npm run dev
+
+Frontend runs on: http://localhost:3000
+📸 Demo Scenarios
+Try these prompts to see the agent in action:
+ * "Generate a cyberpunk city image"
+   * Agent Action: Selects Image Tool → Pays $0.020 USDC → Generates Image.
+ * "What is the current weather in Dhaka?"
+   * Agent Action: Selects Weather API → Pays $0.005 USDC → Fetches Data.
+ * "Check Bitcoin price"
+   * Agent Action: Selects Oracle Feed → Pays $0.002 USDC → Returns Price.
+📂 API Documentation
+The backend provides auto-generated Swagger documentation.
+Access it at: http://localhost:8000/docs
+POST /api/agent/execute
+Request:
+{
+  "task": "Draw a sunset",
+  "model_preference": "groq"
+}
+
+Response:
+{
+  "status": "success",
+  "content": "Here is the image...",
+  "reasoning": "Image generation requires GPU compute...",
+  "transaction": {
+    "amount": "0.020",
+    "currency": "USDC",
+    "tx_hash": "0x7a...",
+    "explorer_url": "[https://explorer.arc.circle.com/](https://explorer.arc.circle.com/)..."
+  }
+}
+
+👥 Contributors
+ * Zahid Hasan - Lead Developer - GitHub
+📜 License
+This project is licensed under the MIT License - see the LICENSE file for details.
+
