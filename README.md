@@ -21,10 +21,13 @@ The agent autonomously analyzes user tasks, calculates the required budget, and 
 - **🎨 Modern UI** — Cyberpunk-inspired interface with smooth UX
 - **🔗 Onchain Settlement** — Payments verified via Arc network
 
----
+
+
 
 ## 🏗️ Architecture
 The system consists of a **Next.js Frontend** and a **FastAPI Backend Agent**.
+
+
 
 ```mermaid
 graph LR
