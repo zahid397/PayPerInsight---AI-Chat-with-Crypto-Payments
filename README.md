@@ -1,7 +1,7 @@
 
 # 🧠 ArcMind: Autonomous Agentic Commerce
 
-![ArcMind Banner](https://via.placeholder.com/1200x400/050511/00f2ff?text=ArcMind+Autonomous+Agent)
+
 
 > **"One Task. One Payment. Infinite Possibilities."**
 
