@@ -1,120 +1,113 @@
-
 # 🧠 ArcMind: Autonomous Agentic Commerce
+**“One Task. One Payment. Infinite Possibilities.”**
 
+Next.js · FastAPI · Groq · Circle · Arc
 
-
-> **"One Task. One Payment. Infinite Possibilities."**
-
-[![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.109-009688)](https://fastapi.tiangolo.com/)
-[![Groq](https://img.shields.io/badge/AI-Groq-orange)](https://groq.com/)
-[![Circle](https://img.shields.io/badge/Payments-USDC-blue)](https://www.circle.com/)
-[![Arc](https://img.shields.io/badge/Network-Arc_Testnet-bd00ff)](https://arc.circle.com/)
+---
 
 ## 🚀 Overview
+ArcMind is an autonomous AI agent built for the **Agentic Commerce on Arc Hackathon**.  
+Unlike traditional chatbots, ArcMind doesn’t just respond — it **acts, decides cost, and pays**.
 
-**ArcMind** is an autonomous AI agent built for the **Agentic Commerce on Arc** hackathon. Unlike traditional chatbots, ArcMind doesn't just talk—it **acts** and **pays**.
+The agent autonomously analyzes user tasks, calculates the required budget, and executes **USDC micropayments on the Arc Network** to fetch premium data (weather, prices) or generate high-fidelity content (images).
 
-It autonomously analyzes user requests, calculates the necessary budget, and executes micropayments using **USDC on the Arc Network** to fetch premium data (Weather, Stocks) or generate high-fidelity content (Images).
+---
 
-### 🌟 Key Features
-* **🤖 Hybrid AI Brain:** Powered by **Groq (Mixtral)** for lightning-fast reasoning and **Google Gemini** as a robust fallback.
-* **💸 Autonomous Payments:** The agent autonomously executes **USDC micropayments** via Circle Gateway on the Arc Testnet.
-* **🧠 Transparent Reasoning:** Visualizes the agent's internal thought process ("Reasoning") and tool selection logic.
-* **🎨 Cyberpunk UI:** A modern, glassmorphism-inspired interface built with **Tailwind CSS** and **Framer Motion**.
-* **⚡ Real-time Settlement:** Payments are verified instantly with transaction hash links to the Arc Explorer.
+## 🌟 Key Features
+- **🤖 Autonomous AI Agent** — Decides tools, cost, and execution flow
+- **💸 USDC Micropayments** — Payments executed via Circle infrastructure on Arc Testnet
+- **🧠 Transparent Reasoning** — Shows why a tool/payment was chosen
+- **⚡ Fast Inference** — Groq (Mixtral) for low-latency reasoning
+- **🎨 Modern UI** — Cyberpunk-inspired interface with smooth UX
+- **🔗 Onchain Settlement** — Payments verified via Arc network
 
 ---
 
 ## 🏗️ Architecture
-
-The system consists of a high-performance **FastAPI Backend** and a reactive **Next.js Frontend**.
+The system consists of a **Next.js Frontend** and a **FastAPI Backend Agent**.
 
 ```mermaid
 graph LR
     A[User] --> B[Frontend UI]
     B --> C[FastAPI Backend]
-    C --> D[AI Agent Logic]
+    C --> D[Agent Logic]
     D --> E[Groq LLM]
     C --> F[Payment Service]
     F --> G[Arc Network]
     G --> C
     C --> B
+
 🛠️ Tech Stack
 Frontend
- * Framework: Next.js 14 (App Router)
- * Styling: Tailwind CSS, Framer Motion
- * Icons: Lucide React
- * State: React Hooks
+Framework: Next.js 14 (App Router)
+Styling: Tailwind CSS, Framer Motion
+Icons: Lucide React
+State: React Hooks
 Backend
- * API: FastAPI (Python)
- * AI Models: Groq (Mixtral-8x7b), Google Gemini Pro
- * Validation: Pydantic
- * Server: Uvicorn
-⚡ Installation & Setup
-Follow these steps to run ArcMind locally.
-1. Backend Setup
-Navigate to the backend folder and install dependencies:
+API: FastAPI (Python)
+AI Models: Groq (Mixtral-8x7b), Google Gemini Pro
+Validation: Pydantic
+Server: Uvicorn
+Blockchain & Payments
+Network: Arc Testnet
+Currency: USDC
+Payments: Circle Gateway (mocked for demo)
+Installation & Setup
+1️⃣ Backend Setup
 cd arcmind-backend
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+source venv/bin/activate
 pip install -r requirements.txt
-
-Create a .env file in arcmind-backend/:
-GROQ_API_KEY=gsk_your_groq_key
+.env
+GROQ_API_KEY=your_groq_key
 GEMINI_API_KEY=your_gemini_key
 CIRCLE_API_KEY=your_circle_key
-PROJECT_NAME="ArcMind Agent"
-
-Run the server:
+PROJECT_NAME=ArcMind
+Run:
 uvicorn app.main:app --reload
-
-Backend runs on: http://localhost:8000
-2. Frontend Setup
-Navigate to the frontend folder:
+Backend runs at:
+👉 http://localhost:8000
+2️⃣ Frontend Setup
 cd arcmind-frontend
 npm install
+Create .env.local:
 
-Create a .env.local file in arcmind-frontend/:
 NEXT_PUBLIC_API_URL=http://localhost:8000/api/agent/execute
-
-Run the frontend:
+Run:
 npm run dev
-
-Frontend runs on: http://localhost:3000
+Frontend runs at:
+👉 http://localhost:3000
 📸 Demo Scenarios
-Try these prompts to see the agent in action:
- * "Generate a cyberpunk city image"
-   * Agent Action: Selects Image Tool → Pays $0.020 USDC → Generates Image.
- * "What is the current weather in Dhaka?"
-   * Agent Action: Selects Weather API → Pays $0.005 USDC → Fetches Data.
- * "Check Bitcoin price"
-   * Agent Action: Selects Oracle Feed → Pays $0.002 USDC → Returns Price.
+“Generate a cyberpunk city image”
+→ Image Tool → Pays 0.020 USDC → Image generated
+“What is the current weather in Dhaka?”
+→ Weather API → Pays 0.005 USDC → Data fetched
+“Check Bitcoin price”
+→ Oracle Feed → Pays 0.002 USDC → Price returned
 📂 API Documentation
-The backend provides auto-generated Swagger documentation.
-Access it at: http://localhost:8000/docs
+Swagger UI available at:
+👉 http://localhost:8000/docs
+Endpoint
 POST /api/agent/execute
-Request:
+Request
+
 {
   "task": "Draw a sunset",
   "model_preference": "groq"
 }
-
-Response:
+Response
 {
   "status": "success",
-  "content": "Here is the image...",
-  "reasoning": "Image generation requires GPU compute...",
+  "content": "Here is the generated image...",
+  "reasoning": "Image generation requires GPU compute",
   "transaction": {
     "amount": "0.020",
     "currency": "USDC",
-    "tx_hash": "0x7a...",
-    "explorer_url": "[https://explorer.arc.circle.com/](https://explorer.arc.circle.com/)..."
+    "tx_hash": "0xabc123",
+    "network": "Arc Testnet"
   }
 }
-
 👥 Contributors
- * Zahid Hasan - Lead Developer - GitHub
+Zahid Hasan — Lead Developer
 📜 License
-This project is licensed under the MIT License - see the LICENSE file for details.
-
+MIT License — see LICENSE for details.
