@@ -32,16 +32,14 @@ The system consists of a high-performance **FastAPI Backend** and a reactive **N
 
 ```mermaid
 graph LR
-    A[User Request] --> B(Next.js Frontend)
-    B --> C{FastAPI Backend}
-    C -->|1. Reasoning| D[Groq / Gemini AI]
-    C -->|2. Cost Calc| E[Logic Engine]
-    C -->|3. Payment| F[Circle / Arc Network]
-    F -->|Tx Hash| C
-    D -->|Content| C
-    C -->|Response| B
-    B --> G[UI Display]
-
+    A[User] --> B[Frontend UI]
+    B --> C[FastAPI Backend]
+    C --> D[AI Agent Logic]
+    D --> E[Groq LLM]
+    C --> F[Payment Service]
+    F --> G[Arc Network]
+    G --> C
+    C --> B
 🛠️ Tech Stack
 Frontend
  * Framework: Next.js 14 (App Router)
